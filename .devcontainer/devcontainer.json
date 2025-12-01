@@ -1,0 +1,6 @@
+{
+  "name": "Spring Boot Dev",
+  "image": "mcr.microsoft.com/devcontainers/java:21",
+  "postCreateCommand": "mvn clean install",
+  "forwardPorts": [8080]
+}
