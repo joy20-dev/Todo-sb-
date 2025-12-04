@@ -50,56 +50,77 @@ dropDown.addEventListener("change",()=>{
 
  }
 
- function renderTasks(tasks){
-  taskList.innerHTML= "";
+function renderTasks(tasks) {
+  taskList.innerHTML = "";
 
   tasks.forEach(task => {
-
-    //checkbox creation
     const li = document.createElement("li");
+    li.className = "task-item"; // optional, for further styling
+
+    // --- Checkbox ---
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = task.completed;
+    checkbox.className = "task-checkbox"; // for styling if needed
+    checkbox.addEventListener("change", () =>
+      toggleCompleted(task, checkbox.checked)
+    );
 
-    checkbox.addEventListener("change",()=>toggleCompleted(task,checkbox.checked))
-    //infodiv created
+    // --- Task info container ---
     const infoDiv = document.createElement("div");
-    infoDiv.className = "task-info"+ (task.completed ? ' completed' : 'pending');
-    //title of task
-    const textInput = document.createElement("input");
-    textInput.type ="text";
-    textInput.value = task.title ;
-    textInput.style.fontWeight ="bold";
-    //description of task
-    const descInput = document.createElement("input");
-    descInput.type ="text";
-    descInput.value = task.description;
-    //del btn
-    const deleteBtn = document.createElement("button");
-    deleteBtn.type="button";
-    deleteBtn.textContent="delete Task"
-    deleteBtn.addEventListener("click",()=> deleteTask(task.id,li))
-    // update btn
-    const updateBtn = document.createElement("button")
-    updateBtn.type="button"
-    updateBtn.textContent="update Task";
-    updateBtn.addEventListener("click",()=> updateTask(task.id,textInput.value,descInput.value,checkbox.checked));
+    infoDiv.className = "task-info" + (task.completed ? " completed" : "");
 
-    
-    infoDiv.appendChild(textInput);
-    infoDiv.appendChild(descInput);
+    // --- Title row ---
+    const titleRow = document.createElement("div");
+    titleRow.className = "title-row";
+
+    const titleInput = document.createElement("input");
+    titleInput.required =true;
+    titleInput.type = "text";
+    titleInput.value = task.title;
+    titleInput.className = "task-title-input";
+
+    const updateBtn = document.createElement("button");
+    updateBtn.textContent = "Update";
+    updateBtn.className = "update-btn"; // matches CSS
+    updateBtn.addEventListener("click", () =>
+      updateTask(task.id, titleInput.value, descInput.value, checkbox.checked)
+    );
+
+    titleRow.appendChild(titleInput);
+    titleRow.appendChild(updateBtn);
+
+    // --- Description row ---
+    const descRow = document.createElement("div");
+    descRow.className = "desc-row";
+
+    const descInput = document.createElement("input");
+    descInput.required= true ;
+    descInput.type = "text";
+    descInput.value = task.description;
+    descInput.className = "task-desc-input";
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete";
+    deleteBtn.className = "delete-btn"; // matches CSS
+    deleteBtn.addEventListener("click", () => deleteTask(task.id, li));
+
+    descRow.appendChild(descInput);
+    descRow.appendChild(deleteBtn);
+
+    // --- Build structure ---
+    infoDiv.appendChild(titleRow);
+    infoDiv.appendChild(descRow);
 
     li.appendChild(checkbox);
     li.appendChild(infoDiv);
-    li.appendChild(deleteBtn);
-    li.appendChild(updateBtn);
 
-    taskList.insertBefore(li,taskList.firstChild);  
-    // taskList.appendChild(li)
+    // Add newest at top
+    taskList.insertBefore(li, taskList.firstChild);
   });
-  
+}
 
- }
+
 
  //toggle function
  async function toggleCompleted(task,completed){
@@ -108,6 +129,11 @@ dropDown.addEventListener("change",()=>{
  }
 
  async function updateTask(id,title,description,completed){
+    if(title.trim() ==="" || description.trim() ===""){
+        showNotification("title and description cannot be empty")
+        return
+    }
+    
   await fetch(`${apiUrl}/${id}`,{
     method:"PUT",
     headers:{ "Content-Type": "application/json" },
@@ -125,6 +151,10 @@ dropDown.addEventListener("change",()=>{
 addTaskBtn.addEventListener("click",()=>addTask())
 
 async function addTask(){
+    if(taskTitle.value.trim() ==="" || taskDesc.value.trim() ===""){
+        showNotification("title and description cannot be empty")
+        return;
+    }
   const title = taskTitle.value.trim();
   const description = taskDesc.value.trim();
   if (!title) return;
