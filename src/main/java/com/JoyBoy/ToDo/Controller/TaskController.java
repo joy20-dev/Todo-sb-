@@ -13,7 +13,7 @@ import com.JoyBoy.ToDo.service.TaskService;
 
 
 @RestController 
-@RequestMapping("/tasks")
+@RequestMapping("/api/tasks")
 @RequiredArgsConstructor
 public class TaskController {
 

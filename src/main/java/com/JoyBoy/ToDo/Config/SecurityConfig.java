@@ -3,6 +3,8 @@ package com.JoyBoy.ToDo.Config;
 import java.beans.BeanProperty;
 
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import com.JoyBoy.ToDo.Models.User;
 import com.JoyBoy.ToDo.service.CustomUserDetailsService;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +48,14 @@ public class SecurityConfig{
                 .logout(logout ->logout
                     .logoutSuccessUrl("/login?logout")
                     .permitAll()
+                )
+                //.csrf(csrf -> csrf.disable());
+                .csrf(csrf -> csrf
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 );
+                
+
+
 
         return http.build();
 
@@ -75,5 +87,12 @@ public class SecurityConfig{
 
         
     } 
+
+    @Bean 
+    public AuthenticationManager authenticationManager(HttpSecurity http, DaoAuthenticationProvider provider) throws Exception{
+        AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authBuilder.authenticationProvider(provider);
+        return authBuilder.build();
+    }
 }
 

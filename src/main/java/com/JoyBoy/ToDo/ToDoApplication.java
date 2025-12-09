@@ -39,6 +39,9 @@ public class ToDoApplication {
 				user.setRole("ROLE_USER");
 				userRepository.save(user);
 			}
+			System.out.println("✅ Sample users created!");
+            System.out.println("   Admin: admin / admin123");
+            System.out.println("   User:  user / user123");
 		};
 	}
 

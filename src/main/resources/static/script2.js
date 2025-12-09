@@ -1,4 +1,4 @@
-const apiUrl = '/tasks';
+const apiUrl = '/api/tasks';
 
 const taskList = document.getElementById('task-list');
 const taskTitle = document.getElementById('task-title');
@@ -23,7 +23,7 @@ dropDown.addEventListener("change",()=>{
 
 // function to render all tasks
  async function fetchTasks(){
-  const apiUrl = "/tasks";
+  const apiUrl = "/api/tasks";
   const resp= await fetch(apiUrl)
   const tasks = await resp.json();
   renderTasks(tasks)
@@ -32,7 +32,7 @@ dropDown.addEventListener("change",()=>{
 
 //  function to render completed tasks
  async function completedTasks(){
-  const apiUrl= "/tasks/completed"
+  const apiUrl= "/api/tasks/completed"
   const resp= await fetch(apiUrl)
   const tasks = await resp.json();
   renderTasks(tasks)
@@ -42,7 +42,7 @@ dropDown.addEventListener("change",()=>{
 //  function for pending task
 
  async function pendingTasks(){
-  const apiUrl= "/tasks/pending"
+  const apiUrl= "api/tasks/pending"
   const resp= await fetch(apiUrl)
 
   const tasks =await resp.json();
@@ -120,6 +120,20 @@ function renderTasks(tasks) {
   });
 }
 
+// function to read cookie from browser
+function getCookie(name) {
+    // Split document.cookie by '; ' to get all cookies
+    const cookie = document.cookie
+        .split('; ')
+        .find(row => row.startsWith(name + '='));
+    
+    // Return the value after '=' or null if not found
+    return cookie ? cookie.split('=')[1] : null;
+}
+
+csrfToken = getCookie('XSRF-TOKEN' )
+console.log(csrfToken)
+
 
 
  //toggle function
@@ -136,7 +150,9 @@ function renderTasks(tasks) {
     
   await fetch(`${apiUrl}/${id}`,{
     method:"PUT",
-    headers:{ "Content-Type": "application/json" },
+    headers:{ "Content-Type": "application/json"
+              // 'X-CSRF-TOKEN': csrfToken
+     },
     body: JSON.stringify({
       title:title,
       description:description,
@@ -162,7 +178,9 @@ async function addTask(){
   await fetch(apiUrl, {
 
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json"
+              //'X-CSRF-TOKEN': csrfToken
+     },
     body: JSON.stringify({
       title: title,
       description: description,
