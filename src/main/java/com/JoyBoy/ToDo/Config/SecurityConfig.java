@@ -37,7 +37,7 @@ public class SecurityConfig{
     public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception{
             http. 
                 authorizeHttpRequests(auth ->auth
-                    .requestMatchers("/","/tasks","/login","/register","/css/**","/js/**").permitAll()
+                    .requestMatchers("/","/api/register","/register.html","/tasks","/login","/register","/css/**","/js/**").permitAll()
                     .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -49,10 +49,10 @@ public class SecurityConfig{
                     .logoutSuccessUrl("/login?logout")
                     .permitAll()
                 )
-                //.csrf(csrf -> csrf.disable());
-                .csrf(csrf -> csrf
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                );
+                .csrf(csrf -> csrf.disable());
+                // .csrf(csrf -> csrf
+                //     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                // );
                 
 
 
